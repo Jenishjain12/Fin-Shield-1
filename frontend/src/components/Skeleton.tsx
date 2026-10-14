@@ -1,3 +1,13 @@
-export function Skeleton({ className = "" }: { className?: string }) {
-  return <div className={`animate-pulse rounded bg-[#1a1e27] ${className}`} />;
+interface Props {
+  className?: string;
+}
+
+export function Skeleton({ className = "" }: Props) {
+  return (
+    <div
+      className={`skeleton-shimmer rounded ${className}`}
+      role="status"
+      aria-label="Loading…"
+    />
+  );
 }

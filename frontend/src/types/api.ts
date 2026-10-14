@@ -108,6 +108,100 @@ export interface PaginatedAds {
   page_size: number;
 }
 
+// ── Discovery Agent Types ────────────────────────────────────────────────
+
+export interface SourceInfo {
+  source_id: string;
+  name: string;
+  status: "available" | "auth_required" | "rate_limited" | "planned";
+  description: string;
+  is_authenticated: boolean;
+  requires_credentials: boolean;
+  notes: string;
+}
+
+export interface DiscoveryCandidate {
+  id: string;
+  source_type?: string;
+  source_url: string;
+  page_title: string | null;
+  selection_reason: string;
+  screenshot_filename: string | null;
+  ad_relevance_score: number;
+  status: string;
+  error_message: string | null;
+  advertisement_id: string | null;
+  is_duplicate: boolean;
+  captured_at: string | null;
+  created_at: string;
+}
+
+export interface DiscoveryRun {
+  id: string;
+  query: string;
+  sources: string;
+  max_candidates: number;
+  min_risk_threshold?: number;
+  status: string;
+  progress_message: string | null;
+  candidates_found: number;
+  candidates_analyzed: number;
+  error_message: string | null;
+  started_at: string | null;
+  completed_at: string | null;
+  created_at: string;
+}
+
+export interface CandidateAnalysis {
+  candidate_id: string;
+  advertisement: AdvertisementDetail;
+}
+
+export interface DiscoveryRunDetail extends DiscoveryRun {
+  candidates: DiscoveryCandidate[];
+  candidate_analyses: CandidateAnalysis[];
+}
+
+export interface DiscoverySSEEvent {
+  event_type: string;
+  message: string;
+  status?: string;
+  candidates_found?: number;
+  candidates_analyzed?: number;
+}
+
+// ── AI Investigation Copilot Types ───────────────────────────────────────
+
+export interface CopilotStatus {
+  is_configured: boolean;
+  model: string;
+  description: string;
+}
+
+export interface CopilotEvidenceRef {
+  type: string;
+  label: string;
+  value: string;
+}
+
+export interface CopilotResponse {
+  answer: string;
+  evidence_references: CopilotEvidenceRef[];
+  advertisement_id: string | null;
+  model_used: string;
+  error: string | null;
+}
+
+export interface CopilotMessage {
+  id: string;
+  role: "user" | "assistant";
+  content: string;
+  timestamp: string;
+  evidence_references?: CopilotEvidenceRef[];
+  model_used?: string;
+  error?: string | null;
+}
+
 export class ApiError extends Error {
   status: number;
   constructor(status: number, message: string) {

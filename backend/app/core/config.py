@@ -1,5 +1,8 @@
+from __future__ import annotations
+
 from functools import lru_cache
 from pathlib import Path
+from typing import Optional
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -19,6 +22,19 @@ class Settings(BaseSettings):
     shared_entity_alert_threshold: int = 3
     high_risk_min_score: int = 50
     log_level: str = "INFO"
+
+    # NVIDIA Nemotron AI Investigation Copilot
+    nvidia_api_key: Optional[str] = None
+    nvidia_base_url: str = "https://integrate.api.nvidia.com/v1"
+    nvidia_model: str = "nvidia/nemotron-3.5-lightning-30b-a3b"
+    nvidia_timeout_seconds: float = 45.0
+    nvidia_max_tokens: int = 2048
+
+    # Fallback / Alternative Copilot Providers
+    gemini_api_key: Optional[str] = None
+    gemini_model: str = "gemini-3.8-flash"
+    gemini_timeout_seconds: float = 30.0
+    gemini_max_output_tokens: int = 1024
 
     @property
     def cors_origin_list(self) -> list[str]:

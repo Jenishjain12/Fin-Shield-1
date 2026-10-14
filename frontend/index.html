@@ -3,15 +3,28 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FIN-SHIELD</title>
+    <title>FIN-SHIELD — Advertisement Intelligence</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
+    <!--
+      Flash-prevention: runs synchronously before any CSS or React hydration.
+      Reads localStorage; falls back to OS preference; defaults to dark.
+      Adds the correct class to <html> immediately.
+    -->
+    <script>
+      (function () {
+        var saved = null;
+        try { saved = localStorage.getItem('fin-shield-theme'); } catch (e) {}
+        var theme = saved === 'light' || saved === 'dark'
+          ? saved
+          : (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches
+              ? 'light'
+              : 'dark');
+        document.documentElement.classList.add(theme);
+      })();
+    </script>
   </head>
-  <body class="bg-ink text-paper">
+  <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

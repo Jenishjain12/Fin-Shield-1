@@ -4,10 +4,15 @@ import type {
   CampaignDetail,
   CampaignSummary,
   DashboardSummary,
+  DiscoveryRun,
+  DiscoveryRunDetail,
   Note,
   PaginatedAds,
   Relationship,
   ReviewStatus,
+  SourceInfo,
+  CopilotStatus,
+  CopilotResponse,
 } from "../types/api";
 import { ApiError } from "../types/api";
 
@@ -67,5 +72,35 @@ export const api = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ content }),
+    }),
+
+  // ── Discovery Agent ──────────────────────────────────────────────────
+  discoverySources: () => request<SourceInfo[]>("/api/discovery/sources"),
+  startDiscovery: (query: string, sources = "web", max_candidates = 10, min_risk_threshold = 0) =>
+    request<DiscoveryRun>("/api/discovery/runs", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query, sources, max_candidates, min_risk_threshold }),
+    }),
+  discoveryRuns: () => request<DiscoveryRun[]>("/api/discovery/runs"),
+  discoveryRun: (id: string) => request<DiscoveryRunDetail>(`/api/discovery/runs/${id}`),
+
+  // ── AI Investigation Copilot ─────────────────────────────────────────
+  copilotStatus: () => request<CopilotStatus>("/api/copilot/status"),
+  copilotMessage: (
+    message: string,
+    advertisement_id?: string | null,
+    compare_ad_id?: string | null,
+    conversation_history?: Array<{ role: string; content: string }>
+  ) =>
+    request<CopilotResponse>("/api/copilot/message", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message,
+        advertisement_id,
+        compare_ad_id,
+        conversation_history,
+      }),
     }),
 };

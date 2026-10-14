@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useMemo, useState } from "react";
+import { CheckCircle2, XCircle } from "lucide-react";
 
 type Toast = { id: number; message: string; tone: "ok" | "err" };
 
@@ -6,26 +7,43 @@ const ToastContext = createContext<(message: string, tone?: "ok" | "err") => voi
 
 export function ToastProvider({ children }: { children: React.ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([]);
+
   const push = useCallback((message: string, tone: "ok" | "err" = "ok") => {
     const id = Date.now() + Math.random();
-    setToasts((current) => [...current, { id, message, tone }]);
+    setToasts((cur) => [...cur, { id, message, tone }]);
     window.setTimeout(() => {
-      setToasts((current) => current.filter((toast) => toast.id !== id));
-    }, 4200);
+      setToasts((cur) => cur.filter((t) => t.id !== id));
+    }, 4000);
   }, []);
+
   const value = useMemo(() => push, [push]);
+
   return (
     <ToastContext.Provider value={value}>
       {children}
-      <div className="fixed bottom-4 right-4 z-50 space-y-2">
+      {/* Toast stack */}
+      <div
+        className="fixed bottom-4 right-4 z-50 flex flex-col gap-2"
+        aria-live="polite"
+        aria-label="Notifications"
+      >
         {toasts.map((toast) => (
           <div
             key={toast.id}
-            className={`rounded border px-4 py-3 text-sm shadow-lg ${
-              toast.tone === "err" ? "border-high/40 bg-panel text-rose-200" : "border-accent/30 bg-panel text-paper"
-            }`}
+            role="status"
+            className={`flex items-start gap-2.5 rounded border px-3.5 py-3
+                        text-sm shadow-panel animate-slide-in max-w-xs
+                        ${toast.tone === "err"
+                          ? "border-danger/35 bg-panel text-paper"
+                          : "border-ok/30 bg-panel text-paper"
+                        }`}
           >
-            {toast.message}
+            {toast.tone === "err" ? (
+              <XCircle size={15} className="mt-px shrink-0 text-danger" aria-hidden="true" />
+            ) : (
+              <CheckCircle2 size={15} className="mt-px shrink-0 text-ok" aria-hidden="true" />
+            )}
+            <span>{toast.message}</span>
           </div>
         ))}
       </div>
